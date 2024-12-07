@@ -1,12 +1,31 @@
 package robert.paba.dbroom
 
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
+import android.widget.Button
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.withContext
+import robert.paba.dbroom.database.daftarBelanja
+import robert.paba.dbroom.database.daftarBelanjaDB
 
 class MainActivity : AppCompatActivity() {
+
+    private lateinit var DB : daftarBelanjaDB
+
+    private lateinit var adapterDaftar: adapterDaftar
+    private var arDaftar : MutableList<daftarBelanja> = mutableListOf()
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -15,6 +34,40 @@ class MainActivity : AppCompatActivity() {
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
+        }
+
+        adapterDaftar = adapterDaftar(arDaftar)
+        var _rvDaftar = findViewById<RecyclerView>(R.id.rvDaftar)
+        _rvDaftar.layoutManager=LinearLayoutManager(this)
+        _rvDaftar.adapter = adapterDaftar
+
+        DB = daftarBelanjaDB.getDatabase(this)
+        val _fabadd = findViewById<FloatingActionButton>(R.id.fabAdd)
+        _fabadd.setOnClickListener {
+            startActivity(Intent(this, TambahDaftarNew::class.java))
+        }
+
+        adapterDaftar.setOnItemClickCallback(
+            object : adapterDaftar.OnItemClickCallback{
+                override fun delData(dtBelanja: daftarBelanja){
+                    CoroutineScope(Dispatchers.IO).async {
+                        DB.fundaftarBelanjaDAO().delete(dtBelanja)
+                        val daftarBelanja = DB.fundaftarBelanjaDAO().selectAll()
+                        withContext(Dispatchers.Main){
+                            adapterDaftar.isiData(daftarBelanja)
+                        }
+                    }
+                }
+            })
+    }
+
+    override fun onStart() {
+        super.onStart()
+        CoroutineScope(Dispatchers.Main).async {
+            val daftarBelanja = DB.fundaftarBelanjaDAO().selectAll()
+            Log.d("data ROOM", daftarBelanja.toString())
+
+            adapterDaftar.isiData(daftarBelanja)
         }
     }
 }

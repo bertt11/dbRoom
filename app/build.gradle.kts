@@ -6,12 +6,12 @@ plugins {
 
 android {
     namespace = "robert.paba.dbroom"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "robert.paba.dbroom"
         minSdk = 24
-        targetSdk = 34
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
 
