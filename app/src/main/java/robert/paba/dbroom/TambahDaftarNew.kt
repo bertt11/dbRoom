@@ -17,12 +17,14 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import robert.paba.dbroom.database.daftarBelanja
 import robert.paba.dbroom.database.daftarBelanjaDB
+import robert.paba.dbroom.database.historyBarangDB
 import robert.paba.dbroom.helper.DateHelper
 import kotlin.math.tan
 
 class TambahDaftarNew : AppCompatActivity() {
 
     var DB = daftarBelanjaDB.getDatabase(this)
+//    var DBhistory = historyBarangDB.getDatabase(this)
     var tanggal = DateHelper.getCurrentDate()
 
     var iID : Int = 0
@@ -42,6 +44,7 @@ class TambahDaftarNew : AppCompatActivity() {
         val _etJumlah = findViewById<EditText>(R.id.etJumlah)
         val _btnTambah = findViewById<Button>(R.id.btnTambah)
         val _btnUpdate = findViewById<Button>(R.id.btnUpdate)
+//        val _btnSelesai = findViewById<Button>(R.id.btnSelesai)
 
         iID = intent.getIntExtra("id", 0)
         iAddEdit = intent.getIntExtra("addEdit",0)
@@ -86,5 +89,18 @@ class TambahDaftarNew : AppCompatActivity() {
             }
             startActivity(Intent(this, MainActivity::class.java))
         }
+
+//        _btnSelesai.setOnClickListener{
+//            CoroutineScope(Dispatchers.IO).async {
+//                DBhistory.funHistoryBarangDAO().insert(
+//                    daftarBelanja(
+//                        tanggal = tanggal,
+//                        item = _etItem.text.toString(),
+//                        jumlah = _etJumlah.text.toString()
+//                    )
+//                )
+//            }
+//            startActivity(Intent(this, MainActivity::class.java))
+//        }
     }
 }

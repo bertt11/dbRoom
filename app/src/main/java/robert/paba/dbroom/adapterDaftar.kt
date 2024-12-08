@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView.OnItemClickListener
+import android.widget.Button
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
@@ -32,6 +33,7 @@ class adapterDaftar (private val daftarBelanja : MutableList<daftarBelanja>):
 
         var _btnEdit = itemView.findViewById<ImageView>(R.id.btnEdit)
         var _btnDelete = itemView.findViewById<ImageView>(R.id.btnDelete)
+        var _btnSelesai = itemView.findViewById<Button>(R.id.btnSelesai)
 
     }
 
@@ -67,6 +69,10 @@ class adapterDaftar (private val daftarBelanja : MutableList<daftarBelanja>):
         holder._btnDelete.setOnClickListener{
             onItemClickCallback.delData(daftar)
         }
+
+//        holder._btnSelesai.setOnClickListener{
+//            onItemClickCallback.delData(daftar)
+//        }
     }
 
     override fun getItemCount(): Int {
