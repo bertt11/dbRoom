@@ -4,17 +4,23 @@ import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView.OnItemClickListener
 import android.widget.Button
-import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.appcompat.view.menu.MenuView.ItemView
 import androidx.recyclerview.widget.RecyclerView
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.withContext
 import robert.paba.dbroom.database.daftarBelanja
+import robert.paba.dbroom.database.daftarBelanjaDB
+import robert.paba.dbroom.database.historyBarang
+import robert.paba.dbroom.database.historyBarangDB
 
 class adapterDaftar (private val daftarBelanja : MutableList<daftarBelanja>):
         RecyclerView.Adapter<adapterDaftar.ListViewHolder>(){
+
+    private lateinit var DB : daftarBelanjaDB
 
         private lateinit var onItemClickCallback : OnItemClickCallback
 
@@ -56,6 +62,7 @@ class adapterDaftar (private val daftarBelanja : MutableList<daftarBelanja>):
     override fun onBindViewHolder(holder: adapterDaftar.ListViewHolder, position: Int) {
         var daftar = daftarBelanja[position]
 
+
         holder._tvTanggal.setText(daftar.tanggal)
         holder._tvItemBarang.setText(daftar.item)
         holder._tvjumlahBarang.setText(daftar.jumlah)
@@ -70,9 +77,28 @@ class adapterDaftar (private val daftarBelanja : MutableList<daftarBelanja>):
             onItemClickCallback.delData(daftar)
         }
 
-//        holder._btnSelesai.setOnClickListener{
-//            onItemClickCallback.delData(daftar)
-//        }
+        holder._btnSelesai.setOnClickListener {
+            CoroutineScope(Dispatchers.IO).async {
+
+                onItemClickCallback.delData(daftar)
+
+                val historyBarangDB = historyBarangDB.getDatabase(it.context)
+                historyBarangDB.funhistoryBarangDAO().insert(
+                    historyBarang(
+                        tanggal2 = daftar.tanggal,
+                        item2 = daftar.item,
+                        jumlah2 = daftar.jumlah
+                    )
+                )
+
+                val daftarBelanja = DB.fundaftarBelanjaDAO().selectAll()
+                withContext(Dispatchers.Main) {
+                    isiData(daftarBelanja)
+                }
+            }
+        }
+
+
     }
 
     override fun getItemCount(): Int {

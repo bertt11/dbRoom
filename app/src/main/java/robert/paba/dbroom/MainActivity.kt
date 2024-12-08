@@ -3,7 +3,6 @@ package robert.paba.dbroom
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.widget.Button
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -41,7 +40,7 @@ class MainActivity : AppCompatActivity() {
         _rvDaftar.layoutManager=LinearLayoutManager(this)
         _rvDaftar.adapter = adapterDaftar
 
-        DB = daftarBelanjaDB.getDatabase(this)
+        DB = daftarBelanjaDB.getDatabase(applicationContext)
         val _fabadd = findViewById<FloatingActionButton>(R.id.fabAdd)
         _fabadd.setOnClickListener {
             startActivity(Intent(this, TambahDaftarNew::class.java))
